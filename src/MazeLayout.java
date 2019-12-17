@@ -194,6 +194,7 @@ public class MazeLayout {
             this.walls[i] = new Wall(new Point[]{p1, p2});
         }
         System.out.println(isSolvable());
+        genPath();
     }
 
     public boolean isWallAt(Point point, int direction) {
@@ -229,7 +230,7 @@ public class MazeLayout {
     }
 
     private int lengthSolution() {
-        return -1;
+        return finalDists[endPosition.getY()][endPosition.getX()];
     }
 
     private boolean solveHelp(Point current, Point end, boolean[][] visited, int[][] dists, int dist) {
@@ -255,94 +256,29 @@ public class MazeLayout {
         }
         return left || right || up || down;
     }
-
-    /*private boolean isSolvable() {
-        return false;
+    Point[] finalPath;
+    private Point[] getPath() {
+        Point[] path = new Point[lengthSolution()+1];
+        Point current = startPosition;
+        for(int i = 0; i < path.length; i++) {
+            path[i] = current.duplicate();
+            current = current.duplicate();
+            if(current.getY() != 0 && finaltrues[current.getY()-1][current.getX()] && finalDists[current.getY()-1][current.getX()] - 1 == finalDists[current.getY()][current.getX()]) {
+                current.setY(current.getY()-1);
+            } else if(current.getY() != finalDists.length-1 && finaltrues[current.getY()+1][current.getX()] && finalDists[current.getY()+1][current.getX()] - 1 == finalDists[current.getY()][current.getX()]) {
+                current.setY(current.getY()+1);
+            } else if(current.getX() != 0 && finaltrues[current.getY()][current.getX()-1] && finalDists[current.getY()][current.getX()-1] - 1 == finalDists[current.getY()][current.getX()]) {
+                current.setX(current.getX()-1);
+            } else if(current.getX() != finalDists[0].length-1 && finaltrues[current.getY()][current.getX()+1] && finalDists[current.getY()][current.getX()+1] - 1 == finalDists[current.getY()][current.getX()]) {
+                current.setX(current.getX()+1);
+            }
+        }
+        return path;
     }
 
-    private int lengthSolution() {
-        return dijkstra();
-    }*/
-
-    /*private int dijkstra() {
-        int[][] visited = new int[size[1]][size[0]];
-        for(int r = 0; r < size[1]; r++) {
-            for(int c = 0; c < size[0]; c++) {
-                visited[r][c] = -2;
-            }
-        }
-        return dijkstraHelper(startPosition, 0, visited);
-    }*/
-
-
-
-    /*private int dijkstraHelper(Point point, int distance, int[][] visited) {
-        if(visited[point.getY()][point.getX()] != -2) {
-            return -1;
-        }
-        //System.out.println(point);
-        visited[point.getY()][point.getX()] = distance;
-        int up = -1, right = -1, down = -1, left = -1;
-        if(isValidMove(point, UP)) {
-            up = dijkstraHelper(new Point(point.getX(), point.getY()-1), distance+1, visited);
-        }
-        if(isValidMove(point, RIGHT)) {
-            right = dijkstraHelper(new Point(point.getX()+1, point.getY()), distance+1, visited);
-        }
-        if(isValidMove(point, DOWN)) {
-            down = dijkstraHelper(new Point(point.getX(), point.getY()+1), distance+1, visited);
-        }
-        if(isValidMove(point, LEFT)) {
-            left = dijkstraHelper(new Point(point.getX()-1, point.getY()), distance+1, visited);
-        }
-        System.out.println(up + " " + right + " " + down + " " + left + " " + isValidMove(point, UP));
-        /*if(up == -1 && right == -1 && down == -1 && left == -1) {
-            return -1;
-        }*/
-        /*int first = -1, second = -1;
-        if(up == -1 || right == -1 || down == -1 || left == -1) {
-            if (up == -1 || right == -1) {
-                if (up != -1) {
-                    first = up;
-                } else if (right != -1) {
-                    first = right;
-                }
-            } else {
-                first = Math.min(up, right);
-            }
-            if (down == -1 || left == -1) {
-                if (down != -1) {
-                    second = down;
-                } else if (left != -1) {
-                    second = left;
-                }
-            } else {
-                first = Math.min(down, left);
-            }
-            if(first == -1 || second == -1) {
-                if (first != -1) {
-                    return second;
-                } else if(second != -1) {
-                    return first;
-                }
-            } else {
-                return Math.min(first, second);
-            }
-        }*//*
-        if(up == -1) {
-            up = Integer.MAX_VALUE;
-        }
-        if(right == -1) {
-            right = Integer.MAX_VALUE;
-        }
-        if(down == -1) {
-            down = Integer.MAX_VALUE;
-        }
-        if(left == -1) {
-            left = Integer.MAX_VALUE;
-        }
-        return Math.min(Math.min(up, right), Math.min(down, left));
-    }*/
+    private void genPath() {
+        finalPath = getPath();
+    }
 
     public Point getStartPosition() {
         return startPosition;
